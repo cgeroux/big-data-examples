@@ -1,19 +1,14 @@
-TARGET=WordCount
+TARGET=wordcount
 
 LOCALINPUTFILE=./sampleArchive.txt
 INPUTDIR=/user/ubuntu/examples/
 INPUTFILE=sampleArchive.txt
-OUTPUTDIR=${INPUTDIR}/wordcount/MR/output
-MAINCLASS=${TARGET}
+OUTPUTDIR=${INPUTDIR}/wordcount/spark/output
+MASTER=local
 
-${TARGET}.jar:${TARGET}.class
-	jar cf ${TARGET}.jar ${TARGET}*.class
 
-${TARGET}.class:${TARGET}.java
-	hadoop com.sun.tools.javac.Main ${TARGET}.java
-
-run: ${TARGET}.jar cleanoutput uploadinputtohdfs
-	hadoop jar ${TARGET}.jar ${MAINCLASS} ${SEARCHSTRING} ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
+run: ${TARGET}.py cleanoutput uploadinputtohdfs
+	spark-submit --master ${MASTER} ${TARGET}.py ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
 
 runbg: ${TARGET}.jar cleanoutput
 	hadoop jar ${TARGET}.jar ${MAINCLASS} ${SEARCHSTRING} ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR} &>std_out.txt&

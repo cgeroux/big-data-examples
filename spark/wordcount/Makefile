@@ -3,17 +3,18 @@ TARGET=WordCount
 LOCALINPUTFILE=./sampleArchive.txt
 INPUTDIR=/user/ubuntu/examples/
 INPUTFILE=sampleArchive.txt
-OUTPUTDIR=${INPUTDIR}/wordcount/MR/output
+OUTPUTDIR=${INPUTDIR}/spark/output
 MAINCLASS=${TARGET}
+NUM_CORES=3
 
 ${TARGET}.jar:${TARGET}.class
 	jar cf ${TARGET}.jar ${TARGET}*.class
 
 ${TARGET}.class:${TARGET}.java
-	hadoop com.sun.tools.javac.Main ${TARGET}.java
+	javac -cp /usr/lib/spark/lib/spark-assembly-1.5.1-hadoop2.6.0.jar ${TARGET}.java
 
 run: ${TARGET}.jar cleanoutput uploadinputtohdfs
-	hadoop jar ${TARGET}.jar ${MAINCLASS} ${SEARCHSTRING} ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
+	spark-submit --master yarn --deploy-mode cluster --class ${MAINCLASS} ${TARGET}.jar ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
 
 runbg: ${TARGET}.jar cleanoutput
 	hadoop jar ${TARGET}.jar ${MAINCLASS} ${SEARCHSTRING} ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR} &>std_out.txt&
