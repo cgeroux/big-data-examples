@@ -33,8 +33,8 @@ public final class WordCount {
 
   public static void main(String[] args) throws Exception {
 
-    if (args.length < 1) {
-      System.err.println("Usage: WordCount <file>");
+    if (args.length < 2) {
+      System.err.println("Usage: WordCount <input-file> <output-dir>");
       System.exit(1);
     }
 
@@ -63,10 +63,11 @@ public final class WordCount {
       }
     });
 
-    List<Tuple2<String, Integer>> output = counts.collect();
-    for (Tuple2<?,?> tuple : output) {
-      System.out.println(tuple._1() + ": " + tuple._2());
-    }
+    counts.saveAsTextFile(args[1]);
+    //List<Tuple2<String, Integer>> output = counts.collect();
+    //for (Tuple2<?,?> tuple : output) {
+    //  System.out.println(tuple._1() + ": " + tuple._2());
+    //}
     ctx.stop();
   }
 }

@@ -3,18 +3,44 @@ TARGET=WordCount
 LOCALINPUTFILE=./sampleArchive.txt
 INPUTDIR=/user/ubuntu/examples/
 INPUTFILE=sampleArchive.txt
-OUTPUTDIR=${INPUTDIR}/spark/output
+OUTPUTDIR=${INPUTDIR}/wordcount/spark/java/output
 MAINCLASS=${TARGET}
+
+
+#Settings for how to run the job:
+#see https://spark.apache.org/docs/1.2.1/submitting-applications.html 
+#for more details
 NUM_CORES=3
+
+#run using yarn schedualar
+MASTER=yarn
+
+#run using yarn schedualar in cluster mode
+#MASTER=yarn-cluster
+
+#run using yarn schedualar in cluster mode
+#MASTER=yarn-client
+
+#run on local machine with given number of cores
+#MASTER=local[${NUM_CORES]
+
+#run on spark standalone cluster
+#MASTER=spark://master:7077
+
+#cluster deploy mode
+#DEPLOY_MODE=--deploy-mode cluster
+
+#client deploy mode
+#DEPLOY_MODE=
 
 ${TARGET}.jar:${TARGET}.class
 	jar cf ${TARGET}.jar ${TARGET}*.class
 
 ${TARGET}.class:${TARGET}.java
-	javac -cp /usr/lib/spark/lib/spark-assembly-1.5.1-hadoop2.6.0.jar ${TARGET}.java
+	javac -cp /usr/lib/spark/lib/spark-assembly-1.6.1-hadoop2.6.0.jar ${TARGET}.java
 
 run: ${TARGET}.jar cleanoutput uploadinputtohdfs
-	spark-submit --master yarn --deploy-mode cluster --class ${MAINCLASS} ${TARGET}.jar ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
+	spark-submit --master ${MASTER} ${DEPLOY_MODE}--executor-cores ${NUM_CORES} --class ${MAINCLASS} ${TARGET}.jar ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
 
 runbg: ${TARGET}.jar cleanoutput
 	hadoop jar ${TARGET}.jar ${MAINCLASS} ${SEARCHSTRING} ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR} &>std_out.txt&
@@ -24,7 +50,7 @@ uploadinputtohdfs: ${LOCALINPUTFILE}
 	-hdfs dfs -put ${LOCALINPUTFILE} ${INPUTDIR}${INPUTFILE}
 
 showoutput:
-	hdfs dfs -cat ${OUTPUTDIR}/part-r-00000
+	hdfs dfs -cat ${OUTPUTDIR}/part-00000
 
 cleanoutput:
 	-hdfs dfs -rm -R ${OUTPUTDIR}
