@@ -24,15 +24,15 @@ if __name__ == "__main__":
   #read in input
   lines = sc.textFile(inputFile)
   
-  #write it back out to output
-  lines.saveAsTextFile(sys.argv[2])
+  counts = lines.flatMap(lambda x: x.split(' ')) \
+                .map(lambda x: (x, 1)) \
+                .reduceByKey(add)#no exceptions here
+  counts.saveAsTextFile(sys.argv[2])#works
   
-  #counts = lines.flatMap(lambda x: x.split(' ')) \
-  #              .map(lambda x: (x, 1)) \
-  #              .reduceByKey(add)
-  #counts.saveAsTextFile(sys.argv[2])
+  #convert to a list
   #output = counts.collect()
   
+  #loop over the list and print out to std out
   #for (word, count) in output:
   #    print("%s: %i" % (word, count))
   #

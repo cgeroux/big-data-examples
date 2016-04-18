@@ -4,11 +4,11 @@ LOCALINPUTFILE=./sampleArchive.txt
 INPUTDIR=/user/ubuntu/examples/
 INPUTFILE=sampleArchive.txt
 OUTPUTDIR=${INPUTDIR}/wordcount/spark/output
-MASTER=local
-
+MASTER=yarn
+NUM_CORES=3
 
 run: ${TARGET}.py cleanoutput uploadinputtohdfs
-	spark-submit --master ${MASTER} ${TARGET}.py ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
+	spark-submit --master ${MASTER} --executor-cores ${NUM_CORES} ${TARGET}.py ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR}
 
 runbg: ${TARGET}.jar cleanoutput
 	hadoop jar ${TARGET}.jar ${MAINCLASS} ${SEARCHSTRING} ${INPUTDIR}${INPUTFILE} ${OUTPUTDIR} &>std_out.txt&
@@ -18,7 +18,7 @@ uploadinputtohdfs: ${LOCALINPUTFILE}
 	-hdfs dfs -put ${LOCALINPUTFILE} ${INPUTDIR}${INPUTFILE}
 
 showoutput:
-	hdfs dfs -cat ${OUTPUTDIR}/part-r-00000
+	hdfs dfs -cat ${OUTPUTDIR}/part-00000
 
 cleanoutput:
 	-hdfs dfs -rm -R ${OUTPUTDIR}
