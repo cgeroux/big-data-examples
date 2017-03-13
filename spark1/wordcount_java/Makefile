@@ -1,6 +1,6 @@
 TARGET=WordCount
 
-LOCALINPUTFILE=./sampleArchive.txt
+LOCALINPUTFILE=../../sampleArchive.txt
 INPUTDIR=/user/ubuntu/examples/
 INPUTFILE=sampleArchive.txt
 OUTPUTDIR=${INPUTDIR}/wordcount/spark/java/output
