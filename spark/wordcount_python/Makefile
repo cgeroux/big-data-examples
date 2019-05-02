@@ -1,7 +1,7 @@
 TARGET=wordcount
 
 LOCALINPUTFILE=../../sampleArchive.txt
-INPUTDIR=/user/ubuntu/examples/
+INPUTDIR=/user/${USER}/examples/
 INPUTFILE=sampleArchive.txt
 OUTPUTDIR=${INPUTDIR}/wordcount/spark/python/output
 
